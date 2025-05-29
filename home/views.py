@@ -246,7 +246,7 @@ load_dotenv()
 
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
-HEADERS = {"Authorization": f"Bearer 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", "Content-Type": "application/json"}
+HEADERS = {"Authorization": f"Bearer {OPENROUTER_API_KEY}", "Content-Type": "application/json"}
 
 def get_medical_diagnosis(patient_name, age, gender, symptoms):
     """Generates AI-based diagnosis, treatment, and medicine prescription."""
