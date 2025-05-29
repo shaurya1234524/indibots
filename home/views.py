@@ -390,10 +390,7 @@ def generate_pdf_report(patient_name, age, gender, symptoms, contact, address, d
     elements.append(Paragraph(diagnosis_data.get("Medicines", "N/A"), body_text))
     elements.append(Spacer(1, 10))
 
-    # Additional Notes
-    elements.append(Paragraph("Additional Notes", section_heading))
-    elements.append(Paragraph(diagnosis_data.get("Additional Notes", "N/A"), body_text))
-    elements.append(Spacer(1, 10))
+
 
     # Follow-up
     elements.append(Paragraph("Follow-up", section_heading))
