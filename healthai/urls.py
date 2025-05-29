@@ -47,9 +47,9 @@ urlpatterns = [
     path('accounts/', include('home.urls')),
         path('resend-otp/', resend_otp_view, name='resend_otp'),  # ✅ Add this line
          path('logout/', logout_view, name='logout'),
-    path("lab-report-analysis/", views.lab_report_analysis, name="lab_report_analysis"),
+    
      path('contact/', views.contact_us, name='contact_us'),
-    path("image-diagnosis/", views.image_diagnosis, name="image_diagnosis"),
+   
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
