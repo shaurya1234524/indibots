@@ -406,73 +406,6 @@ def generate_pdf_report(patient_name, age, gender, symptoms, contact, address, d
     return buffer
 
 
-def analyze_medical_image(image_path):
-    """Sends an X-ray or CT scan image to OpenRouter and gets a diagnosis."""
-    
-    # Convert image to base64 format
-    with open(image_path, "rb") as img_file:
-        base64_image = base64.b64encode(img_file.read()).decode("utf-8")
-
-    prompt = """
-    You are an AI medical assistant. Analyze the given X-ray or CT scan image 
-    and provide:
-    1. Possible diagnosis (disease detected).
-    2. Recommended medications.
-    3. Additional medical advice.
-    """
-
-    payload = {
-        "model": "google/gemma-3-1b-it:free",
-        "messages": [
-            {"role": "system", "content": prompt},
-            {"role": "user", "content": [{"type": "image", "image": base64_image}]}
-        ]
-    }
-   
-    try:
-        response = requests.post(API_URL, headers=HEADERS, json=payload)
-        response.raise_for_status()
-        data = response.json()
-
-        # Extract response
-        diagnosis_text = data.get("choices", [{}])[0].get("message", {}).get("content", "Diagnosis not available.")
-
-        return diagnosis_text
-
-    except requests.exceptions.RequestException as e:
-        print("Error in API call:", e)
-        return "⚠️ AI Diagnosis not available."
-
-def image_diagnosis(request):
-    diagnosis_result = None
-    image_url = None
-
-    if request.method == "POST":
-        form = MedicalImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            image = form.cleaned_data["image"]
-            
-            # Define upload path
-            upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
-            os.makedirs(upload_dir, exist_ok=True)  # Ensure directory exists
-
-            image_path = os.path.join(upload_dir, image.name)
-
-            # Save the uploaded image
-            with open(image_path, "wb") as f:
-                for chunk in image.chunks():
-                    f.write(chunk)
-
-            image_url = settings.MEDIA_URL + 'uploads/' + image.name  # Generate URL for display
-
-            # Analyze the image
-            diagnosis_result = analyze_medical_image(image_path)
-
-    else:
-        form = MedicalImageForm()
-
-    return render(request, "image_diagnosis.html", {"form": form, "diagnosis_result": diagnosis_result, "image_url": image_url})
-
 
 
 def extract_text_from_pdf(pdf_path):
@@ -481,57 +414,7 @@ def extract_text_from_pdf(pdf_path):
         text = "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
     return text
 
-def analyze_lab_report(report_path):
-    # Check file type
-    if report_path.endswith(".pdf"):
-        report_text = extract_text_from_pdf(report_path)
-    else:
-        with open(report_path, "rb") as img_file:
-            base64_image = base64.b64encode(img_file.read()).decode("utf-8")
-        report_text = f"[Image of lab report: {base64_image}]"
 
-    prompt = f"""
-    You are an AI medical assistant. Analyze the given lab report and provide:
-    1. A summary of the test results.
-    2. Possible medical insights.
-    3. Any abnormal findings with explanations.
-    4. Suggested next steps.
-    
-    Lab Report:
-    {report_text}
-    """
-
-    headers = {"Authorization": f"Bearer {settings.OPENROUTER_API_KEY}", "Content-Type": "application/json"}
-    payload = {
-        "model": "google/gemma-3-1b-it:free",
-        "messages": [{"role": "system", "content": prompt}]
-    }
-
-    try:
-        response = requests.post(API_URL, headers=headers, json=payload)
-        response.raise_for_status()
-        data = response.json()
-        return data["choices"][0]["message"]["content"]
-    except requests.exceptions.RequestException as e:
-        return f"⚠️ Error processing report: {e}"
-
-def lab_report_analysis(request):
-    report_result = None
-    if request.method == "POST":
-        form = LabReportForm(request.POST, request.FILES)
-        if form.is_valid():
-            report = form.cleaned_data["report"]
-            report_path = f"media/uploads/{report.name}"
-            with open(report_path, "wb") as f:
-                for chunk in report.chunks():
-                    f.write(chunk)
-
-            # Analyze the lab report
-            report_result = analyze_lab_report(report_path)
-    else:
-        form = LabReportForm()
-
-    return render(request, "lab_report_analysis.html", {"form": form, "report_result": report_result})
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
