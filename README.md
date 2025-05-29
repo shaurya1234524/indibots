@@ -1,4 +1,6 @@
 # Indibots-Team leader-shaurya singh jadaun
+# website is live on -
+https://indibots.onrender.com
 # Problem Statement-
 It is a very complex proccess to create a medical report and generate pdf of the report , it requires doctors and other tools.This website helps individuals , other small clinics and doctors to generate an medical report .
 # Solution-
@@ -17,5 +19,10 @@ Backend-Django,Pdf generator,API of mistral ai using openrouter
 
 # Run instructions-
 1.Go to home and click on medical report generator.
+![Screenshot 2025-05-29 174840](https://github.com/user-attachments/assets/08d1f4ab-9e70-45bf-81d6-11e0a7bb267d)
+
 2.Enter details of report
+![Screenshot 2025-05-29 174910](https://github.com/user-attachments/assets/ab1270a1-a1ce-428d-8f65-b23f783ad641)
+
 3.Click on generate button
+-ai report will automatically downloaded
